@@ -18,16 +18,28 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data: function(){
     return {
-      credentail: {},
+      credentail: {
+        username: "",
+        password: "",
+      },
       loading: false,
     }
   },
   methods: {
     login() {
       console.log("login")
+      axios.post('http://localhost:8000/api-token-auth/', this.credentail)
+      .then(res=>{
+        this.loading = true
+        console.log(res)
+      }).catch(err=>{
+        this.loading = true
+        console.log(err)
+      })
     }
   }
 
