@@ -4,6 +4,9 @@
       <span class="sr-only">Loading...</span>
     </div>
     <div v-else class="login-div col-6 offset-3">
+      <div v-if="errors.length" class="error-list alert alert-danger">
+        <div v-for="(error, idx) in errors" :key="idx">{{error}}</div>
+      </div>
       <div class="form-group">
         <label for="id">ID</label>
         <input id="id" type="text" class="form-control" v-model="credentail.username">
@@ -29,22 +32,40 @@ export default {
         password: "",
       },
       loading: false,
+      errors: [],
     }
   },
   methods: {
     login() {
-      console.log("login")
-      axios.post('http://localhost:8000/api-token-auth/', this.credentail)
-      .then(res=>{
-        this.loading = true
-
-        this.$session.start()
-        this.$session.set('jwt', res.data.token)
-        console.log(res)
-      }).catch(err=>{
-        this.loading = true
-        console.log(err)
-      })
+      if (this.checkForm()){
+        console.log("login")
+        axios.post('http://localhost:8000/api-token-auth/', this.credentail)
+        .then(res=>{
+          this.loading = true
+  
+          this.$session.start()
+          this.$session.set('jwt', res.data.token)
+  
+          router.push('/')
+          console.log(res)
+        }).catch(err=>{
+          this.loading = true
+          console.log(err)
+        })
+      }
+    },
+    checkForm(){
+      this.errors = []
+      if (this.credentail.password.length < 8) {
+        this.errors.push('비밀번호는 8글자가 넘어야 합니다.')
+      }
+      if (!this.credentail.username){
+        this.errors.push('아이디를 입력해주세요')
+      }
+      console.log(this.errors)
+      if (this.errors.length === 0){
+        return true
+      }
     }
   }
 
