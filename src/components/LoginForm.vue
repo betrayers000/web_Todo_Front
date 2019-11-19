@@ -19,6 +19,8 @@
 
 <script>
 import axios from 'axios'
+import router from '../router'
+
 export default {
   data: function(){
     return {
@@ -35,6 +37,9 @@ export default {
       axios.post('http://localhost:8000/api-token-auth/', this.credentail)
       .then(res=>{
         this.loading = true
+
+        this.$session.start()
+        this.$session.set('jwt', res.data.token)
         console.log(res)
       }).catch(err=>{
         this.loading = true
