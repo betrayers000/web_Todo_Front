@@ -3,7 +3,7 @@
     <h1>Todo</h1>
     <div class="card my-1" v-for="todo in todos" :key="todo.id">
       <div class="card-body d-flex justify-content-between">
-        <span>{{todo.title}}</span>
+        <span @click="updateTodo(todo)" :class="{completed: todo.completed}">{{todo.title}}</span>
         <span @click="deleteTodo(todo)">🗑️</span>
       </div>
     </div>
@@ -12,6 +12,7 @@
 
 <script>
 import axios from 'axios'
+import jwtDecode from 'jwt-decode'
 
 export default {
   name : 'TodoList',
@@ -41,11 +42,38 @@ export default {
       }).catch(err=>{
         console.log(err)
       })
+    },
+    updateTodo(todo){
+      this.$session.start()
+      const token = this.$session.get('jwt')
+      const decodedToken = jwtDecode(token)
+      const userId = decodedToken.user_id
+      const requestHeader = {
+        headers: {
+          Authorization : "JWT " + token
+        }
+      }
+      const requestForm = new FormData()
+      requestForm.append('user', userId)
+      requestForm.append('title', todo.title)
+      requestForm.append('completed', !todo.completed)
+
+      axios.put(`http://localhost:8000/api/v1/todos/${todo.id}/`, requestForm, requestHeader)
+      .then(res=>{
+        console.log(res)
+        todo.completed = !todo.completed
+      }).catch(err=>{
+        console.log(err)
+      })
     }
   }
 }
 </script>
 
 <style>
+.completed{
+  text-decoration: line-through;
+  color: dimgrey
+}
 
 </style>
