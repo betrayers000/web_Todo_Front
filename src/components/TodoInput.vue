@@ -24,7 +24,7 @@ export default {
       this.$emit('createTodo', this.title)
       this.title = ''
     }
-  }
+  },
 }
 </script>
 

@@ -43,8 +43,9 @@ export default {
         .then(res=>{
           this.loading = true
   
-          this.$session.start()
-          this.$session.set('jwt', res.data.token)
+          // this.$session.start()
+          // this.$session.set('jwt', res.data.token)
+          this.$store.dispatch('login', res.data.token)
   
           router.push('/')
           console.log(res)
