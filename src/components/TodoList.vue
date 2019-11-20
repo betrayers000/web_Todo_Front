@@ -1,12 +1,15 @@
 <template>
   <div>
     <h1>Todo</h1>
-    <div class="card my-1" v-for="todo in todos" :key="todo.id">
-      <div class="card-body d-flex justify-content-between">
-        <span @click="updateTodo(todo)" :class="{completed: todo.completed}">{{todo.title}}</span>
-        <span @click="deleteTodo(todo)">🗑️</span>
+    <button @click="shuffle">shuffle</button>
+    <transition-group name="flip-list">
+      <div class="card my-1 list-complete-item" v-for="todo in todos" :key="todo.id">
+        <div class="card-body d-flex justify-content-between">
+          <span @click="updateTodo(todo)" :class="{completed: todo.completed}">{{todo.title}}</span>
+          <span @click="deleteTodo(todo)">🗑️</span>
+        </div>
       </div>
-    </div>
+    </transition-group>
   </div>
 </template>
 
@@ -65,6 +68,9 @@ export default {
       }).catch(err=>{
         console.log(err)
       })
+    },
+    shuffle(){
+      this.todos.sort(()=>{return 0.5-Math.random()})
     }
   }
 }
@@ -75,5 +81,11 @@ export default {
   text-decoration: line-through;
   color: dimgrey
 }
-
+.flip-list-move {
+  transition: transform 1s;
+}
+.list-complete-enter, .list-complete-leave-to{
+  opacity: 0;
+  transform: translateX(30px);
+}
 </style>
